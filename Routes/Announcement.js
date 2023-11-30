@@ -44,7 +44,7 @@ const commonIncludes = [
 
 ]
 const commonAtributes = [
-    'id',
+    'ID',
     'Title',
     'Description',
     'JobPositionID',

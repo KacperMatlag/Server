@@ -1,5 +1,10 @@
 module.exports=(sequelize,DataTypes)=>{
     const CategoryWithPosition=sequelize.define('CategoryWithPosition',{
+        ID: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         JobPositionID:{
             type:DataTypes.INTEGER,
             allowNull:false,

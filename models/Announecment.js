@@ -1,5 +1,10 @@
 module.exports=(sequalize,DataTypes)=>{
     const Announcement=sequalize.define('Announcement',{
+        ID: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         Title:{
             type: DataTypes.STRING(100),
             allowNull:false,

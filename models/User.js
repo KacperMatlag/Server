@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         Login: {
             type: DataTypes.STRING(50),
-            allowNull: false
+            allowNull: false,
+            unique:true,
         },
         Password: {
             type: DataTypes.STRING,
@@ -15,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         ProfileID: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true,
+            unique: true,
         }
     }, {
         tableName: "user",

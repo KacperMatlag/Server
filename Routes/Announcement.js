@@ -76,13 +76,17 @@ const commonAtributes = [
     ]
 ]
 router.get('/', async (req, res) => {
-    const announcements = await Announcement.findAll({
-        include: commonIncludes,
-        attributes: commonAtributes,
-    });
-
-    res.json(announcements);
-})
+    try {
+        const announcements = await Announcement.findAll({
+            include: commonIncludes,
+            attributes: commonAtributes,
+        });
+        res.status(200).json(announcements);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 router.get('/filter', async (req, res) => {
     try {
         let filterOptions = {};
@@ -167,16 +171,31 @@ router.get('/latest', async (req, res) => {
 }
 );
 router.get('/:id', async (req, res) => {
-    const announcements = await Announcement.findByPk(req.params.id, {
-        include: commonIncludes,
-        attributes: commonAtributes,
-    });
-    res.json(announcements);
-});
+    try {
+        const announcement = await Announcement.findByPk(req.params.id, {
+            include: commonIncludes,
+            attributes: commonAtributes,
+        });
 
-router.post("/",async(req,res)=>{
-    const announcement=req.body;
-    await Announcement.create(announcement);
-    res.send(announcement)
-})
+        if (!announcement) {
+            res.status(404).json({ error: 'Resource not found' });
+            return;
+        }
+
+        res.status(200).json(announcement);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+router.post("/", async (req, res) => {
+    try {
+        const announcement = req.body;
+        await Announcement.create(announcement);
+        res.status(201).json(announcement);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 module.exports = router;

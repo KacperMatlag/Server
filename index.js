@@ -26,6 +26,10 @@ const WorkingTime=require('./Routes/WorkingTime');
 app.use('/WorkingTime',WorkingTime);
 const WorkType=require('./Routes/WorkType');
 app.use('/worktype',WorkType);
+const user = require('./Routes/User');
+app.use("/User",user);
+const profile=require("./Routes/Profile");
+app.use("/profile",profile);
 db.sequelize.sync().then(() => {
     app.listen(2137, () => {
         console.log("Server listen on 2137!");

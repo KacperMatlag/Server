@@ -161,10 +161,15 @@ router.get('/random', async (req, res) => {
 })
 router.get('/latest', async (req, res) => {
     const announcements = await Announcement.findAll({
-        limit: 5,
-        order: [['createdAt', 'DESC']], // Sortuj malejąco według daty dodania
         include: commonIncludes,
         attributes: commonAtributes,
+        where: {
+            expirationDate: {
+                [Op.gte]: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
+        },
+        order: [['createdAt', 'DESC']],
+        limit: 5,
     });
 
     res.json(announcements);

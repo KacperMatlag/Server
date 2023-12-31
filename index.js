@@ -1,37 +1,32 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
 
 app.use(express.json());
 app.use(cors());
 const db = require("./models");
 //Routers
-const JobPositionsRouter = require('./Routes/JobPositions');
-app.use("/jobpositions", JobPositionsRouter);
-const CompanyRouter = require("./Routes/Company");
-app.use("/company", CompanyRouter);
-const userProfile = require("./Routes/userProfile");
-app.use("/userProfile", userProfile);
-const WorkCategory = require('./Routes/workCategory');
-app.use("/workCategory",WorkCategory);
-const Announcement=require('./Routes/Announcement');
-app.use('/announcement',Announcement);
-const CategoryWithPosition=require('./Routes/CategoryWithPosition');
-app.use('/cwp',CategoryWithPosition);
-const JobLevel=require('./Routes/Joblevel');
-app.use('/JobLevel',JobLevel);
-const TypeOfContract=require('./Routes/TypeOfContract');
-app.use('/TypeOfContract',TypeOfContract);
-const WorkingTime=require('./Routes/WorkingTime');
-app.use('/WorkingTime',WorkingTime);
-const WorkType=require('./Routes/WorkType');
-app.use('/worktype',WorkType);
-const user = require('./Routes/User');
-app.use("/User",user);
-const profile=require("./Routes/Profile");
-app.use("/profile",profile);
+const routers = [
+  { path: "/jobpositions", router: require("./Routes/JobPositions") },
+  { path: "/company", router: require("./Routes/Company") },
+  { path: "/userProfile", router: require("./Routes/userProfile") },
+  { path: "/workCategory", router: require("./Routes/workCategory") },
+  { path: "/announcement", router: require("./Routes/Announcement") },
+  { path: "/cwp", router: require("./Routes/CategoryWithPosition") },
+  { path: "/JobLevel", router: require("./Routes/Joblevel") },
+  { path: "/TypeOfContract", router: require("./Routes/TypeOfContract") },
+  { path: "/WorkingTime", router: require("./Routes/WorkingTime") },
+  { path: "/worktype", router: require("./Routes/WorkType") },
+  { path: "/User", router: require("./Routes/User") },
+  { path: "/profile", router: require("./Routes/Profile") },
+];
+
+routers.forEach(({ path, router }) => {
+  app.use(path, router);
+});
+
 db.sequelize.sync().then(() => {
-    app.listen(2137, () => {
-        console.log("Server listen on 2137!");
-    })
-})
+  app.listen(2137, () => {
+    console.log("Server listen on 2137!");
+  });
+});

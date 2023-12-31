@@ -8,10 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         Login: {
             type: DataTypes.STRING(50),
             allowNull: false,
-            unique:true,
+            unique: true,
         },
         Password: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1000),
             allowNull: false
         },
         ProfileID: {

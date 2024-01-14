@@ -49,18 +49,6 @@ module.exports = (sequalize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        Requirements: {
-            type: DataTypes.STRING(1000),
-            allowNull: false
-        },
-        WhatTheEmployerOffers: {
-            type: DataTypes.STRING(1000),
-            allowNull: false
-        },
-        Responsibilities: {
-            type: DataTypes.STRING(1000),
-            allowNull: false
-        },
         CompanyID: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -77,7 +65,7 @@ module.exports = (sequalize, DataTypes) => {
 
     Announcement.associate = (models) => {
         Announcement.belongsTo(models.JobPosition, {
-            foreignKey: 'JobPositionID'
+            foreignKey: 'JobPositionID',
         });
 
         Announcement.belongsTo(models.WorkCategory, {
@@ -103,6 +91,20 @@ module.exports = (sequalize, DataTypes) => {
         Announcement.belongsTo(models.WorkType, {
             foreignKey: 'WorkTypeID'
         });
+
+        Announcement.hasMany(models.Duties, {
+            foreignKey: 'AnnouncementID',
+            as: 'Duties',
+        });
+
+        Announcement.hasMany(models.Requirements, {
+            foreignKey: 'AnnouncementID',
+        });
+
+        Announcement.hasMany(models.WhatTheEmployerOffers, {
+            foreignKey: 'AnnouncementID',
+        });
+
     };
     return Announcement;
 }

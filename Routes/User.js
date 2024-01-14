@@ -3,17 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { User, Profile } = require('../models');
 const axios = require('axios');
-
-
+const chalk = require('chalk');
 const commonAtributes = [
   "ID",
   "Login",
   "ProfileID",
 ]
 const commonIncludes = [
-  { 
-    model: Profile, 
-    as: "Profile" 
+  {
+    model: Profile,
+    as: "Profile"
   }
 ]
 
@@ -61,12 +60,14 @@ router.post("/Login", async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Nieprawidłowy login lub hasło' });
     }
+    const loginUser = await User.findOne({
+      where: { Login: Login },
+      include: commonIncludes,
+      attributes: commonAtributes
+    });
+
     res.status(200).json(
-      await User.findOne({
-        where: {Login:Login},
-        include: commonIncludes,
-        attributes: commonAtributes
-      })
+      loginUser
     );
   } catch (error) {
     console.error('Błąd podczas logowania:', error);
@@ -74,10 +75,13 @@ router.post("/Login", async (req, res) => {
   }
 });
 
+
+
+
 const doesUserExistByLogin = async (login) => {
   try {
-    const response=await User.findOne({
-      where:{Login: login}
+    const response = await User.findOne({
+      where: { Login: login }
     })
     return response;
   } catch (error) {

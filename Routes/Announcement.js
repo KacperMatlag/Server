@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require("axios");
 const { Op, Sequelize } = require('sequelize');
 const {
     Announcement,
@@ -10,7 +11,11 @@ const {
     TypeOfContract,
     WorkingTime,
     WorkType,
+    Duties,
+    Requirements,
+    WhatTheEmployerOffers
 } = require('../models');
+const chalk = require('chalk');
 
 const commonIncludes = [
     {
@@ -40,7 +45,19 @@ const commonIncludes = [
     {
         model: WorkType,
         as: "WorkType"
-    }
+    },
+    {
+        model: Duties,
+        as: "Duties"
+    },
+    {
+        model: Requirements,
+        as: "Requirements"
+    },
+    {
+        model: WhatTheEmployerOffers,
+        as: "WhatTheEmployerOffers"
+    },
 
 ]
 const commonAtributes = [
@@ -57,9 +74,6 @@ const commonAtributes = [
     'MinWage',
     'MaxWage',
     'CreatedAt',
-    'Responsibilities',
-    'WhatTheEmployerOffers',
-    'Requirements',
     'ExpirationDate',
     [
         // Calculate the number of days since the announcement date
@@ -73,7 +87,7 @@ const commonAtributes = [
     ],
     [
         Announcement.sequelize.literal('RAND()'), 'randomID',
-    ]
+    ],
 ]
 router.get('/', async (req, res) => {
     try {
@@ -151,13 +165,36 @@ router.get('/filter', async (req, res) => {
 router.get('/random', async (req, res) => {
 
     const announcements = await Announcement.findOne({
-        order: [['randomID', 'DESC']],
         limit: 1,
         include: commonIncludes,
         attributes: commonAtributes,
+        where: {
+            expirationDate: {
+                [Op.gte]: 0,
+            },
+        },
+        order: [[Sequelize.literal('RAND()')]]
     });
 
     res.json(announcements);
+})
+router.get('/getCount', async (req, res) => {
+    try {
+        const countOfAnnouncements = await Announcement.count({
+            include: commonIncludes,
+            attributes: commonAtributes,
+            where: {
+                expirationDate: {
+                    [Op.gte]: 0,
+                },
+            },
+        });
+
+        res.status(200).json({ count: countOfAnnouncements });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 })
 router.get('/latest', async (req, res) => {
     const announcements = await Announcement.findAll({
@@ -171,7 +208,6 @@ router.get('/latest', async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: 5,
     });
-
     res.json(announcements);
 }
 );
@@ -179,9 +215,8 @@ router.get('/:id', async (req, res) => {
     try {
         const announcement = await Announcement.findByPk(req.params.id, {
             include: commonIncludes,
-            attributes: commonAtributes,
+            attributes: commonAtributes
         });
-
         if (!announcement) {
             res.status(404).json({ error: 'Resource not found' });
             return;
@@ -195,8 +230,7 @@ router.get('/:id', async (req, res) => {
 });
 router.post("/", async (req, res) => {
     try {
-        const announcement = req.body;
-        await Announcement.create(announcement);
+        const announcement = await Announcement.create(req.body);
         res.status(201).json(announcement);
     } catch (error) {
         console.error(error);

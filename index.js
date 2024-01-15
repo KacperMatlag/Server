@@ -2,12 +2,36 @@ const express = require("express");
 const mysql = require("mysql2")
 const cors = require("cors");
 const db = require("./models");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const store = require('./sessionStorageMYSQL/sessionStorage')
 
 
 const app = express();
+
+
+
+app.use(session({
+  secret: "secrey",
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  cookie: {
+    maxAge: 2000000,
+    httpOnly: true,
+    secure: false
+  }
+}))
+
+app.use(cookieParser())
+app.use(bodyParser.json())
 app.use(express.json());
-app.use(cors());
-app.set('trust proxy', 1)
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+  credentials: true
+}));
 
 
 
@@ -38,32 +62,4 @@ db.sequelize.sync().then(() => {
   app.listen(2137, () => {
     console.log("Server listen on 2137!");
   });
-});
-
-app.get('/logout', (req, res) => {
-  // Sprawdź, czy użytkownik jest zalogowany
-  if (req.session && req.session.user) {
-    // Pobierz identyfikator sesji
-    const sessionId = req.sessionID;
-
-    // Usuń sesję z bazy danych
-    sessionStorage.destroy(sessionId, (err) => {
-      if (err) {
-        console.error('Error during session deletion:', err);
-        res.status(500).json({ error: 'Server error' });
-      } else {
-        // Usuń dane z sesji
-        req.session.destroy((err) => {
-          if (err) {
-            console.error('Error during session data deletion:', err);
-            res.status(500).json({ error: 'Server error' });
-          } else {
-            res.status(200).json({ message: 'Logout successful' });
-          }
-        });
-      }
-    });
-  } else {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
 });

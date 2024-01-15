@@ -197,6 +197,7 @@ router.get('/getCount', async (req, res) => {
     }
 })
 router.get('/latest', async (req, res) => {
+    console.log(chalk.red(JSON.stringify(req.session)));
     const announcements = await Announcement.findAll({
         include: commonIncludes,
         attributes: commonAtributes,

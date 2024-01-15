@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 const { User, Profile } = require('../models');
 const axios = require('axios');
 const chalk = require('chalk');
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
+const store = require("../sessionStorageMYSQL/sessionStorage");
+
+
 const commonAtributes = [
   "ID",
   "Login",
@@ -60,11 +65,15 @@ router.post("/Login", async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Nieprawidłowy login lub hasło' });
     }
+
     const loginUser = await User.findOne({
       where: { Login: Login },
       include: commonIncludes,
       attributes: commonAtributes
     });
+
+    req.session.user = loginUser;
+    req.session.save();
 
     res.status(200).json(
       loginUser
@@ -75,8 +84,33 @@ router.post("/Login", async (req, res) => {
   }
 });
 
+router.get("/check", (req, res) => {
+  res.json(req.session)
+})
 
-
+router.get('/logout', (req, res) => {
+  if (req.session && req.session.user) {
+    const sessionId = req.sessionID;
+    store.destroy(sessionId, (err) => {
+      if (err) {
+        console.error('Error during session deletion:', err);
+        res.status(500).json({ error: 'Server error' });
+      } else {
+        res.clearCookie('connect.sid');
+        req.session.destroy((err) => {
+          if (err) {
+            console.error('Error during session data deletion:', err);
+            res.status(500).json({ error: 'Server error' });
+          } else {
+            res.status(200).json({ message: 'Logout successful' });
+          }
+        });
+      }
+    });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
 
 const doesUserExistByLogin = async (login) => {
   try {

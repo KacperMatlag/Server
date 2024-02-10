@@ -10,15 +10,13 @@ const store = require('./sessionStorageMYSQL/sessionStorage')
 
 const app = express();
 
-
-
 app.use(session({
-  secret: "secrey",
+  secret: "secret",
   resave: false,
   saveUninitialized: false,
   store: store,
   cookie: {
-    maxAge: 2000000,
+    maxAge: 60000,
     httpOnly: true,
     secure: false
   }

@@ -112,6 +112,22 @@ router.get('/logout', (req, res) => {
   }
 });
 
+
+router.get("/:id", async (req, res) => {
+  try {
+    res.status(200).json(await User.findOne({
+      attributes: commonAtributes,
+      include: commonIncludes,
+      where: {
+        ID: req.params.id
+      }
+    }))
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+
 const doesUserExistByLogin = async (login) => {
   try {
     const response = await User.findOne({

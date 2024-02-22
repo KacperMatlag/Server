@@ -32,27 +32,32 @@ module.exports = (sequelize, DataTypes) => {
         ProfessionalSummary: {
             type: DataTypes.STRING(1000)
         },
-        CurrentJobPositionID :{
+        CurrentJobPositionID: {
             type: DataTypes.INTEGER,
-            allowNull:true,
+            allowNull: true,
         },
-        CurrentJobPositionDescription:{
+        CurrentJobPositionDescription: {
             type: DataTypes.STRING(500),
-            allowNull:true,
+            allowNull: true,
         },
-        Skills:{
+        Skills: {
             type: DataTypes.STRING(1000),
-            allowNull:true,
+            allowNull: true,
         }
     }, {
         tableName: "profile",
         timestamps: false
     });
 
-    Profile.associate=(models)=>{
-        Profile.belongsTo(models.JobPosition,{
-            foreignKey: 'CurrentJobPositionID'
-        })
+    Profile.associate = (models) => {
+        Profile.belongsTo(models.JobPosition, {
+            foreignKey: 'CurrentJobPositionID',
+            as: "JobPosition"
+        });
+        Profile.hasMany(models.UserLanguage, {
+            foreignKey: 'ProfileID',
+            as: "Languages"
+        });
     }
 
     return Profile;

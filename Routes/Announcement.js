@@ -150,13 +150,14 @@ router.get('/filter', async (req, res) => {
                 [Op.lte]: req.query.MaxWage,
             };
         }
+
         const announcements = await Announcement.findAll({
             where: filterOptions,
             include: commonIncludes,
             attributes: commonAtributes,
         });
 
-        res.json(announcements);
+        res.status(200).json(announcements);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });

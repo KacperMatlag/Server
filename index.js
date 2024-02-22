@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const store = require('./sessionStorageMYSQL/sessionStorage')
 
-
 const app = express();
 
 app.use(session({
@@ -16,7 +15,7 @@ app.use(session({
   saveUninitialized: false,
   store: store,
   cookie: {
-    maxAge: 60000,
+    maxAge: 60000 * 30,
     httpOnly: true,
     secure: false
   }
@@ -26,12 +25,10 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+  origin: ['http://localhost:5173', 'http://192.168.0.250:5173'],
+  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'PATCH', 'DELETE'],
   credentials: true
 }));
-
-
 
 //Routers
 const routers = [
@@ -50,6 +47,7 @@ const routers = [
   { path: "/duties", router: require("./Routes/Duties") },
   { path: "/requirements", router: require("./Routes/Requirements") },
   { path: "/WhatTheEmployerOffers", router: require("./Routes/WhatTheEmployerOffers") },
+  { path: "/Languages", router: require("./Routes/Languages") }
 ];
 
 routers.forEach(({ path, router }) => {
@@ -57,7 +55,7 @@ routers.forEach(({ path, router }) => {
 });
 
 db.sequelize.sync().then(() => {
-  app.listen(2137, () => {
+  app.listen(2137, '0.0.0.0', () => {
     console.log("Server listen on 2137!");
   });
 });

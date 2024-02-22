@@ -13,5 +13,12 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'jobposition',
         timestamps: false
     });
+
+    JobPosition.associate = (models) => {
+        JobPosition.hasMany(models.Profile, {
+            foreignKey: 'CurrentJobPositionID',
+            as: "Profiles"
+        });
+    };
     return JobPosition;
 };

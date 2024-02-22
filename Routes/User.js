@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const { User, Profile } = require('../models');
+const { User, Profile, JobPosition, UserLanguage, Languages } = require('../models');
 const axios = require('axios');
 const chalk = require('chalk');
 const session = require("express-session");
@@ -17,9 +17,25 @@ const commonAtributes = [
 const commonIncludes = [
   {
     model: Profile,
-    as: "Profile"
-  }
-]
+    as: "Profile",
+    include: [
+      {
+        model: JobPosition,
+        as: "JobPosition"
+      },
+      {
+        model: UserLanguage,
+        as: "Languages",
+        include: [
+          {
+            model: Languages,
+            as: "Language",
+          }
+        ]
+      }
+    ]
+  },
+];;
 
 
 router.get("/", async (req, res) => {
@@ -30,6 +46,7 @@ router.get("/", async (req, res) => {
     }));
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
+    console.log(chalk.red(error));
   }
 })
 
@@ -87,6 +104,33 @@ router.post("/Login", async (req, res) => {
 router.get("/check", (req, res) => {
   res.json(req.session)
 })
+
+router.post("/extendSession", async (req, res) => {
+  const user = req.body;
+  req.session.user = user;
+  req.session.save();
+  res.json({ message: "Session extended successfully" });
+});
+
+router.post("/changePassword", async (req, res) => {
+  const { Password, ID, NewPassword } = req.body;
+  try {
+    const user = await User.findByPk(ID);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isPasswordValid = await bcrypt.compare(Password, user.Password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const hashedNewPassword = await bcrypt.hash(NewPassword, 10);
+    await user.update({ Password: hashedNewPassword });
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 router.get('/logout', (req, res) => {
   if (req.session && req.session.user) {

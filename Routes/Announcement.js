@@ -182,8 +182,6 @@ router.get('/random', async (req, res) => {
 router.get('/getCount', async (req, res) => {
     try {
         const countOfAnnouncements = await Announcement.count({
-            include: commonIncludes,
-            attributes: commonAtributes,
             where: {
                 expirationDate: {
                     [Op.gte]: 0,

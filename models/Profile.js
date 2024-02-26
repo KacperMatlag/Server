@@ -58,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'ProfileID',
             as: "Languages"
         });
+        Profile.hasMany(models.UserLinks, {
+            foreignKey: "ProfileID",
+            as: "Services"
+        })
     }
 
     return Profile;

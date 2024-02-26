@@ -6,7 +6,13 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        res.status(200).json(await Languages.findAll());
+        res.status(200).json(await Languages.findAll(
+            {
+                order: [
+                    ['Name', 'ASC']
+                ]
+            }
+        ));
     } catch (error) {
         res.status(500).json({ message: "Internal server error" })
         console.log(error);

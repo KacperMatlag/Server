@@ -1,7 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const { User, Profile, JobPosition, UserLanguage, Languages } = require('../models');
+const {
+  User,
+  Profile,
+  JobPosition,
+  UserLanguage,
+  Languages,
+  UserLinks,
+  Service } = require('../models');
 const axios = require('axios');
 const chalk = require('chalk');
 const session = require("express-session");
@@ -22,6 +29,16 @@ const commonIncludes = [
       {
         model: JobPosition,
         as: "JobPosition"
+      },
+      {
+        model: UserLinks,
+        as: "Services",
+        include: [
+          {
+            model: Service,
+            as: "Service"
+          }
+        ]
       },
       {
         model: UserLanguage,

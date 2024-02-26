@@ -4,7 +4,6 @@ const { User, Profile } = require('../models');
 
 router.get("/", async (req, res) => {
     try {
-        // Pobierz wszystkich użytkowników wraz z ich profilami
         const usersWithProfiles = await User.findAll({
             include: Profile
         });

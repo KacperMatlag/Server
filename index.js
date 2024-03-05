@@ -25,7 +25,12 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://192.168.0.250:5173'],
+  origin: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:2137',
+    'http://127.0.0.1:2137',
+  ],
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'PATCH', 'DELETE'],
   credentials: true
 }));
@@ -48,7 +53,8 @@ const routers = [
   { path: "/requirements", router: require("./Routes/Requirements") },
   { path: "/WhatTheEmployerOffers", router: require("./Routes/WhatTheEmployerOffers") },
   { path: "/Languages", router: require("./Routes/Languages") },
-  { path: "/services", router: require("./Routes/Service") }
+  { path: "/services", router: require("./Routes/Service") },
+  { path: "/address", router: require("./Routes/Address") },
 ];
 
 routers.forEach(({ path, router }) => {

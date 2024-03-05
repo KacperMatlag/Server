@@ -9,6 +9,10 @@ module.exports = (Sequalize, DataTypes) => {
             type: DataTypes.STRING(100),
             allowNull: false,
         },
+        UrlPrefix: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        },
         ImageUrl: {
             type: DataTypes.STRING(500),
             allowNull: false,

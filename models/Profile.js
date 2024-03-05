@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         DateOfBirth: {
-            type: DataTypes.DATE
+            type: DataTypes.DATE,
+            allowNull: true
         },
         Email: {
             type: DataTypes.STRING(250),
@@ -24,13 +25,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(9)
         },
         ProfilePicture: {
-            type: DataTypes.STRING(500)
+            type: DataTypes.STRING(500),
+            allowNull: true
         },
         AddressID: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         ProfessionalSummary: {
-            type: DataTypes.STRING(1000)
+            type: DataTypes.STRING(1000),
+            allowNull: true
         },
         CurrentJobPositionID: {
             type: DataTypes.INTEGER,

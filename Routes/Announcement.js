@@ -13,7 +13,8 @@ const {
     WorkType,
     Duties,
     Requirements,
-    WhatTheEmployerOffers
+    WhatTheEmployerOffers,
+    Address
 } = require('../models');
 const chalk = require('chalk');
 
@@ -28,7 +29,12 @@ const commonIncludes = [
     },
     {
         model: Company,
-        as: 'Company'
+        as: 'Company',
+        include: [
+            {
+                model: Address
+            }
+        ]
     },
     {
         model: JobLevel,
@@ -189,7 +195,7 @@ router.get('/getCount', async (req, res) => {
             },
         });
 
-        res.status(200).json({ count: countOfAnnouncements });
+        res.status(200).json(countOfAnnouncements);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });

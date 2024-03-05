@@ -67,6 +67,22 @@ router.get("/", async (req, res) => {
   }
 })
 
+router.get("/profile/:profileID", async (req, res) => {
+  try {
+    res.status(200).json(await User.findAll({
+      attributes: commonAtributes,
+      include: commonIncludes,
+      where: {
+        ProfileID: req.params.profileID
+      }
+    }));
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+    console.log(chalk.red(error));
+  }
+})
+
+
 router.post("/", async (req, res) => {
   try {
     const { Login, Password, ProfileID, Name, Surname, Email } = req.body;
@@ -76,7 +92,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: 'Użytkownik o podanym loginie już istnieje.' });
     }
     const Profile = { Name, Surname, Email };
-    const resultData = await axios.post('http://localhost:2137/profile/', Profile);
+    const resultData = await axios.post('http://127.0.0.1:2137/profile/', Profile);
     user.ProfileID = resultData.data.ID;
     const salt = await bcrypt.genSalt(10);
     user.Password = await bcrypt.hash(user.Password, salt);

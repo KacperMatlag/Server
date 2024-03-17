@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
         Skills: {
             type: DataTypes.STRING(1000),
             allowNull: true,
+        },
+        ProfilePictureURL: {
+            type: DataTypes.STRING(1000),
+            allowNull: true,
         }
     }, {
         tableName: "profile",
@@ -54,6 +58,9 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Profile.associate = (models) => {
+        Profile.belongsTo(models.Address, {
+            foreignKey: 'AddressID'
+        })
         Profile.belongsTo(models.JobPosition, {
             foreignKey: 'CurrentJobPositionID',
             as: "JobPosition"

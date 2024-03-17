@@ -8,13 +8,11 @@ const {
   UserLanguage,
   Languages,
   UserLinks,
-  Service } = require('../models');
-const axios = require('axios');
+  Service, Address } = require('../models');
 const chalk = require('chalk');
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const store = require("../sessionStorageMYSQL/sessionStorage");
-
 
 const commonAtributes = [
   "ID",
@@ -41,8 +39,12 @@ const commonIncludes = [
         ]
       },
       {
+        model: Address
+      },
+      {
         model: UserLanguage,
         as: "Languages",
+        required: false,
         include: [
           {
             model: Languages,
@@ -52,7 +54,7 @@ const commonIncludes = [
       }
     ]
   },
-];;
+];
 
 
 router.get("/", async (req, res) => {
@@ -69,7 +71,7 @@ router.get("/", async (req, res) => {
 
 router.get("/profile/:profileID", async (req, res) => {
   try {
-    res.status(200).json(await User.findAll({
+    res.status(200).json(await User.findOne({
       attributes: commonAtributes,
       include: commonIncludes,
       where: {
@@ -91,11 +93,9 @@ router.post("/", async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Użytkownik o podanym loginie już istnieje.' });
     }
-    const Profile = { Name, Surname, Email };
-    const resultData = await axios.post('http://127.0.0.1:2137/profile/', Profile);
-    user.ProfileID = resultData.data.ID;
-    const salt = await bcrypt.genSalt(10);
-    user.Password = await bcrypt.hash(user.Password, salt);
+    const _Profile = { Name, Surname, Email };
+    const insertedProfile = await Profile.create(_Profile);
+    user.ProfileID = await insertedProfile.ID;
     await User.create(user);
     res.status(201).json(user);
   } catch (error) {

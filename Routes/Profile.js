@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { Profile } = require('../models');
+const { Profile, Address } = require('../models');
 const chalk = require('chalk');
-const { JobPosition } = require("./JobPositions")
+const { upload } = require("../Multer/upload")
 
+router.patch("/img", upload.single("files"), async (req, res) => {
+    console.log(chalk.red(JSON.stringify(req.body)));
+    console.log(chalk.red(JSON.stringify(req.file)));
+    res.status(200).json(req.file)
+})
 
 router.post("/", async (req, res) => {
     const profile = req.body;
@@ -11,22 +16,44 @@ router.post("/", async (req, res) => {
     res.status(201).json(newProfile);
 });
 
-router.patch("/update", async (req, res) => {
+router.get('/RemoveAvatar/:id', async (req, res) => {
+    try {
+        const profile = await Profile.findOne({
+            where: {
+                ID: req.query.id,
+            }
+        })
+        profile.ProfilePictureURL = null;
+        profile.save();
+        res.status(200).json(profile);
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ message: "Failed to update profile" });
+    }
+})
+
+router.patch("/update", upload.single("files"), async (req, res) => {
     const profileId = req.body.ID;
     const updatedProfileData = req.body;
+
     try {
         const existingProfile = await Profile.findByPk(profileId);
         if (!existingProfile) {
             return res.status(404).json({ message: "Profile not found" });
         }
         existingProfile.set(updatedProfileData);
+        if (req.file) {
+            const fullProfilePictureURL = `http://localhost:2137/uploads/${req.file.filename}`;
+            existingProfile.ProfilePictureURL = fullProfilePictureURL;
+        }
         const updatedProfile = await existingProfile.save();
-        res.status(200).json({ profile: updatedProfile }); // Zmieniono status na 200
+        res.status(200).json(updatedProfile);
     } catch (error) {
         console.error("Error updating profile:", error);
         res.status(500).json({ message: "Failed to update profile" });
     }
 });
+
 
 router.post("/updatecurrentjob", async (req, res) => {
     try {
@@ -43,5 +70,30 @@ router.post("/updatecurrentjob", async (req, res) => {
     }
 })
 
+
+router.post("/updateAddress", async (req, res) => {
+    try {
+        const exist = await Address.findOne({
+            where: {
+                Address: req.body.Address.Address
+            }
+        })
+        const existingProfile = await Profile.findByPk(req.body.ProfileID);
+        if (!existingProfile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+        if (exist) {
+            existingProfile.AddressID = exist.ID;
+        } else {
+            const createdAddress = await Address.create(req.body.Address);
+            existingProfile.AddressID = createdAddress.ID;
+        }
+        existingProfile.save();
+        res.status(200)
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" })
+        console.log(error);
+    }
+})
 
 module.exports = router;

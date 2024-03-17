@@ -20,7 +20,7 @@ app.use(session({
     secure: false
   }
 }))
-
+app.use('/uploads', express.static('./uploads'));
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(express.json());

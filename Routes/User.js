@@ -8,7 +8,10 @@ const {
   UserLanguage,
   Languages,
   UserLinks,
-  Service, Address } = require('../models');
+  Service,
+  UserWithCompany,
+  Address,
+  Company } = require('../models');
 const chalk = require('chalk');
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
@@ -24,6 +27,21 @@ const commonIncludes = [
     model: Profile,
     as: "Profile",
     include: [
+      {
+        model: UserWithCompany,
+        as: "Companies",
+
+        include: [
+          {
+            model: Company,
+            include: [
+              {
+                model: Address
+              }
+            ]
+          }
+        ]
+      },
       {
         model: JobPosition,
         as: "JobPosition"
@@ -200,7 +218,7 @@ router.get("/:id", async (req, res) => {
       }
     }))
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json(error);
   }
 })
 

@@ -214,6 +214,7 @@ router.get('/latest', async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: 5,
     });
+
     res.json(announcements);
 }
 );

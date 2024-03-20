@@ -55,6 +55,7 @@ const routers = [
   { path: "/Languages", router: require("./Routes/Languages") },
   { path: "/services", router: require("./Routes/Service") },
   { path: "/address", router: require("./Routes/Address") },
+  { path: "/uwc", router: require("./Routes/UserWithCompany") },
 ];
 
 routers.forEach(({ path, router }) => {

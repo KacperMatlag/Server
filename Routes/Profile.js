@@ -4,6 +4,8 @@ const { Profile, Address } = require('../models');
 const chalk = require('chalk');
 const { upload } = require("../Multer/upload")
 
+
+
 router.patch("/img", upload.single("files"), async (req, res) => {
     console.log(chalk.red(JSON.stringify(req.body)));
     console.log(chalk.red(JSON.stringify(req.file)));
@@ -35,7 +37,6 @@ router.get('/RemoveAvatar/:id', async (req, res) => {
 router.patch("/update", upload.single("files"), async (req, res) => {
     const profileId = req.body.ID;
     const updatedProfileData = req.body;
-
     try {
         const existingProfile = await Profile.findByPk(profileId);
         if (!existingProfile) {

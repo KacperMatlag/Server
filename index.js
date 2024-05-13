@@ -25,12 +25,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(express.json());
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:2137',
-    'http://127.0.0.1:2137',
-  ],
+  origin: 'http://localhost:5173',
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'PATCH', 'DELETE'],
   credentials: true
 }));
@@ -56,6 +51,10 @@ const routers = [
   { path: "/services", router: require("./Routes/Service") },
   { path: "/address", router: require("./Routes/Address") },
   { path: "/uwc", router: require("./Routes/UserWithCompany") },
+  { path: "/schooltype", router: require("./Routes/SchoolType") },
+  { path: "/education", router: require("./Routes/Education") },
+  { path: "/course", router: require("./Routes/Course") },
+  { path: "/application", router: require("./Routes/Application") },
 ];
 
 routers.forEach(({ path, router }) => {

@@ -5,13 +5,6 @@ const chalk = require('chalk');
 const { upload } = require("../Multer/upload")
 
 
-
-router.patch("/img", upload.single("files"), async (req, res) => {
-    console.log(chalk.red(JSON.stringify(req.body)));
-    console.log(chalk.red(JSON.stringify(req.file)));
-    res.status(200).json(req.file)
-})
-
 router.post("/", async (req, res) => {
     const profile = req.body;
     const newProfile = await Profile.create(profile);

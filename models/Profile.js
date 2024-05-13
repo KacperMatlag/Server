@@ -78,6 +78,14 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "ProfileID",
             as: "Companies",
         })
+        Profile.hasMany(models.Education, {
+            foreignKey: "ProfileID",
+            allowNull: true
+        })
+        Profile.hasMany(models.Course, {
+            foreignKey: "ProfileID",
+            as: "Course"
+        })
     }
 
     return Profile;

@@ -1,14 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { Company, Address, UserWithCompany } = require('../models');
-const chalk = require('chalk');
 const { upload } = require("../Multer/upload")
-
-const commonIncludes = [
-    {
-        model: Address
-    }
-]
+const { commonIncludes } = require("../utils/Company")
 
 router.get("/", async (req, res) => {
     res.json(await Company.findAll({
@@ -35,5 +29,24 @@ router.post("/", upload.single("files"), async (req, res) => {
         console.log(error);
     }
 });
+
+router.delete("/:ID", async (req, res) => {
+    try {
+        const toRemove = await Company.findByPk(req.params.ID);
+        if (!toRemove)
+            res.status(404).json("Resource not found");
+        else {
+            await Company.destroy({
+                where: {
+                    ID: req.params.ID
+                }
+            })
+            res.status(200).json("Removed succesfuly")
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Internal server error" })
+        console.log(error);
+    }
+})
 
 module.exports = router;

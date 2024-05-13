@@ -1,16 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { CategoryWithPosition, JobPosition, WorkCategory } = require('../models');
-const commonIncludes = [
-    {
-        model: JobPosition,
-        as: 'JobPosition',
-    },
-    {
-        model: WorkCategory,
-        as: 'WorkCategory',
-    }
-]
+const { CategoryWithPosition } = require('../models');
+const { commonIncludes } = require("../utils/CategoryWithPosition");
 router.get('/', async (req, res) => {
     res.json(await CategoryWithPosition.findAll({
         include: commonIncludes,

@@ -4,82 +4,17 @@ const bcrypt = require('bcryptjs');
 const {
   User,
   Profile,
-  JobPosition,
-  UserLanguage,
-  Languages,
-  UserLinks,
-  Service,
-  UserWithCompany,
-  Address,
-  Company } = require('../models');
+} = require('../models');
 const chalk = require('chalk');
-const session = require("express-session");
-const MySQLStore = require("express-mysql-session")(session);
 const store = require("../sessionStorageMYSQL/sessionStorage");
-
-const commonAtributes = [
-  "ID",
-  "Login",
-  "ProfileID",
-]
-const commonIncludes = [
-  {
-    model: Profile,
-    as: "Profile",
-    include: [
-      {
-        model: UserWithCompany,
-        as: "Companies",
-
-        include: [
-          {
-            model: Company,
-            include: [
-              {
-                model: Address
-              }
-            ]
-          }
-        ]
-      },
-      {
-        model: JobPosition,
-        as: "JobPosition"
-      },
-      {
-        model: UserLinks,
-        as: "Services",
-        include: [
-          {
-            model: Service,
-            as: "Service"
-          }
-        ]
-      },
-      {
-        model: Address
-      },
-      {
-        model: UserLanguage,
-        as: "Languages",
-        required: false,
-        include: [
-          {
-            model: Languages,
-            as: "Language",
-          }
-        ]
-      }
-    ]
-  },
-];
-
+const { commonAtributes, commonIncludes, commonOrder } = require("../utils/User")
 
 router.get("/", async (req, res) => {
   try {
     res.status(200).json(await User.findAll({
       attributes: commonAtributes,
       include: commonIncludes,
+      order: commonOrder,
     }));
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -89,13 +24,18 @@ router.get("/", async (req, res) => {
 
 router.get("/profile/:profileID", async (req, res) => {
   try {
-    res.status(200).json(await User.findOne({
+    const profil = await User.findOne({
       attributes: commonAtributes,
       include: commonIncludes,
       where: {
         ProfileID: req.params.profileID
-      }
-    }));
+      },
+      order: commonOrder
+    })
+    if (profil)
+      res.status(200).json(profil);
+    else
+      res.status(404).json("Resource not found")
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
     console.log(chalk.red(error));
@@ -215,7 +155,8 @@ router.get("/:id", async (req, res) => {
       include: commonIncludes,
       where: {
         ID: req.params.id
-      }
+      },
+      order: commonOrder,
     }))
   } catch (error) {
     res.status(500).json(error);

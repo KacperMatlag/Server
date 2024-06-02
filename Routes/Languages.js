@@ -34,7 +34,15 @@ router.get("/:UserID", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        res.status(200).json(await UserLanguage.create(req.body));
+        const created = await UserLanguage.create(req.body);
+        res.status(200).json(await UserLanguage.findOne({
+            where: {
+                ID: created.ID
+            },
+            include: [{ model: Languages, as: "Language" }]
+
+
+        }));
     } catch (error) {
         res.status(500).json({ message: "Internal server error" })
         console.log(error);

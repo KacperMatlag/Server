@@ -2,13 +2,28 @@ const express = require('express');
 const router = express.Router();
 const { Company, Address, UserWithCompany } = require('../models');
 const { upload } = require("../Multer/upload")
-const { commonIncludes } = require("../utils/Company")
+const { commonIncludes } = require("../utils/Company");
+const chalk = require('chalk');
 
 router.get("/", async (req, res) => {
     res.json(await Company.findAll({
         include: commonIncludes
     }));
 });
+
+router.get("/:ID", async (req, res) => {
+    try {
+        res.status(200).json(await Company.findOne({
+            where: {
+                ID: req.params.ID
+            },
+            include: [{ model: Address, as: "Address" }]
+        }))
+    } catch (error) {
+        res.status(500).json({ msg: "Internal server error" })
+        console.log(error);
+    }
+})
 
 router.post("/", upload.single("files"), async (req, res) => {
     try {
@@ -27,6 +42,24 @@ router.post("/", upload.single("files"), async (req, res) => {
     } catch (error) {
         res.status(500).json({ msg: "Internal server error" })
         console.log(error);
+    }
+});
+
+router.patch("/", upload.single("files"), async (req, res) => {
+    try {
+        const { Name, Description, ID } = req.body;
+        if (!ID) {
+            return res.status(400).json({ error: "ID is required" });
+        }
+        const existing = await Company.findByPk(ID);
+        if (!existing) {
+            return res.status(404).json({ error: "Company not found" });
+        }
+        await existing.update({ Name, Description });
+        res.status(200).json(existing);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

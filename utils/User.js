@@ -28,7 +28,6 @@ const commonIncludes = [
             {
                 model: UserWithCompany,
                 as: "Companies",
-
                 include: [
                     {
                         model: Company,

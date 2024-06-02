@@ -53,6 +53,7 @@ router.post("/updatecurrentjob", async (req, res) => {
     try {
         const { ID, JobPosition, JobDescription } = req.body;
         const existingProfile = await Profile.findByPk(ID);
+        // return console.log(chalk.red(JSON.stringify(req.body)));
         if (!existingProfile) return res.status(401).json({ message: "Unauthorized" })
         existingProfile.CurrentJobPositionID = JobPosition;
         existingProfile.CurrentJobPositionDescription = JobDescription;

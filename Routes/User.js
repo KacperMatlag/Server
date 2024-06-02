@@ -148,6 +148,7 @@ router.get('/logout', (req, res) => {
 });
 
 
+
 router.get("/:id", async (req, res) => {
   try {
     res.status(200).json(await User.findOne({

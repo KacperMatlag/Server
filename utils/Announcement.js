@@ -9,8 +9,9 @@ const { JobPosition,
     Duties,
     Requirements,
     WhatTheEmployerOffers,
-    Address } = require("../models")
-const { Op, Sequelize } = require("sequelize")
+    Address,
+    Application } = require("../models")
+const { Op, Sequelize } = require("sequelize");
 const commonIncludes = [
     {
         model: JobPosition,
@@ -57,6 +58,10 @@ const commonIncludes = [
         model: WhatTheEmployerOffers,
         as: "WhatTheEmployerOffers"
     },
+    {
+        model: Application,
+        as: "Applications"
+    }
 
 ]
 const commonAtributes = [

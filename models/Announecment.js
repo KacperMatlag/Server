@@ -105,6 +105,10 @@ module.exports = (sequalize, DataTypes) => {
             foreignKey: 'AnnouncementID',
         });
 
+        Announcement.hasMany(models.Application, {
+            foreignKey: "AnnouncementID"
+        })
+
     };
     return Announcement;
 }

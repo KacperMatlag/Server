@@ -10,7 +10,10 @@ const {
     Company,
     Education,
     SchoolType,
-    Course
+    Course,
+    Employment,
+    Application,
+    Announcement
 } = require('../models');
 
 const { Sequelize } = require('sequelize');
@@ -25,6 +28,24 @@ const commonIncludes = [
         model: Profile,
         as: "Profile",
         include: [
+            {
+                model: Application,
+                as: "Applications",
+                include: [
+                    {
+                        model: Announcement,
+                        as: "Announcement",
+                        include: [
+                            { model: Company, as: "Company" }
+                        ]
+                    }
+                ]
+            }
+            ,
+            {
+                model: Employment,
+                as: "Employment"
+            },
             {
                 model: UserWithCompany,
                 as: "Companies",

@@ -4,6 +4,7 @@ const { Company, Address, UserWithCompany } = require('../models');
 const { upload } = require("../Multer/upload")
 const { commonIncludes } = require("../utils/Company");
 const chalk = require('chalk');
+const { where } = require('sequelize');
 
 router.get("/", async (req, res) => {
     res.json(await Company.findAll({
@@ -55,7 +56,8 @@ router.patch("/", upload.single("files"), async (req, res) => {
         if (!existing) {
             return res.status(404).json({ error: "Company not found" });
         }
-        await existing.update({ Name, Description });
+        const Image = req.file ? `http://localhost:2137/uploads/${req.file.filename}` : req.body.Image;
+        await existing.update({ Name, Description, Image: Image });
         res.status(200).json(existing);
     } catch (error) {
         console.error(error);
@@ -81,5 +83,7 @@ router.delete("/:ID", async (req, res) => {
         console.log(error);
     }
 })
+
+
 
 module.exports = router;

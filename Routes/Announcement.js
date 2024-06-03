@@ -57,7 +57,16 @@ router.get('/filter', async (req, res) => {
                 [Op.like]: `%${req.query.Title ?? ""}%`
             },
         }
-
+        if (req.query.MinWage) {
+            filter["MinWage"] = {
+                [Op.gte]: req.query.MinWage
+            }
+        }
+        if (req.query.MaxWage) {
+            filter["MaxWage"] = {
+                [Op.lte]: req.query.MaxWage
+            }
+        }
         const filterOptions = Object.fromEntries(
             Object.entries(filter).filter(([key, value]) => value !== "" && value !== undefined && value !== null)
         );

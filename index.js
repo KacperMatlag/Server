@@ -55,6 +55,7 @@ const routers = [
   { path: "/education", router: require("./Routes/Education") },
   { path: "/course", router: require("./Routes/Course") },
   { path: "/application", router: require("./Routes/Application") },
+  { path: "/employment", router: require("./Routes/Employment") },
 ];
 
 routers.forEach(({ path, router }) => {
